@@ -1,40 +1,86 @@
+import os
 import rosbag
 import pandas as pd
 import sensor_msgs.point_cloud2 as pc2
 
-# 输入的 bag 文件和输出的 CSV 文件路径
-bag_file = 'bag.bag'
-output_csv = 'output.csv'
-topic_name = '/hugin_raf_1/radar_data'
+# 定义多个 bag 文件路径
+bag_files = [
+    '/media/sax/新加卷/待测548数据集/jf_test.bag',
+    '/media/sax/新加卷/待测548数据集/jf_test2.bag',
+    '/media/sax/新加卷/待测548数据集/jf_test3.bag'
+]  # 可以添加更多 bag 文件路径
 
-# 用于存储所有点云数据和额外信息
-all_data = []
+# 定义要读取的 topic
+topics_to_check = ['/ars548', '/hugin_raf_1/radar_data', '/ars548_process/point_cloud2',
+                   '/ars548_process/detection_point_cloud', '/radar/PointCloudDetection']  # 根据实际的 topic 名称修改
 
-# 读取 bag 文件
-with rosbag.Bag(bag_file, 'r') as bag:
-    frame_id = 0  # 帧序号
-    for topic, msg, t in bag.read_messages(topics=[topic_name]):
-        # 提取时间戳
-        timestamp = msg.header.stamp.to_sec()  # 将时间戳转换为秒
 
-        # 获取字段名称
-        if frame_id == 0:
-            columns = ['frame_id', 'timestamp'] + \
-                [field.name for field in msg.fields]
+def process_bag_file(bag_file):
+    # 检查文件是否存在
+    if not os.path.isfile(bag_file):
+        print(f"Error: Bag file '{bag_file}' not found.")
+        return
 
-        # 提取点云数据
-        pc_gen = pc2.read_points(
-            msg, field_names=columns[2:], skip_nans=True)  # 从第三列开始提取点云数据
-        for point in pc_gen:
-            # 将帧序号、时间戳和点云信息组合在一起
-            all_data.append((frame_id, timestamp) + point)
+    # 从 bag 文件名生成 CSV 和 TXT 文件名
+    bag_base_name = os.path.splitext(os.path.basename(bag_file))[0]
+    output_csv_pc2 = f'{bag_base_name}_PointCloud2.csv'
+    output_txt_pc2 = f'{bag_base_name}_PointCloud2.txt'
+    output_csv_pc = f'{bag_base_name}_PointCloud.csv'
+    output_txt_pc = f'{bag_base_name}_PointCloud.txt'
 
-        frame_id += 1  # 更新帧序号
+    # 用于存储不同类型的数据
+    all_data_pc2 = []
+    all_data_pc = []
 
-# 创建 DataFrame
-df = pd.DataFrame(all_data, columns=columns)
+    # 读取当前 bag 文件
+    with rosbag.Bag(bag_file, 'r') as bag:
+        frame_id = 0  # 帧序号
+        for topic, msg, t in bag.read_messages(topics=topics_to_check):
+            timestamp = msg.header.stamp.to_sec()  # 时间戳转换为秒
 
-# 保存为 CSV 文件
-df.to_csv(output_csv, index=False)
-print(
-    f"PointCloud2 data with frame ID and timestamp has been saved to {output_csv}")
+            # 处理 PointCloud2 数据
+            if msg._type == 'sensor_msgs/PointCloud2':
+                if frame_id == 0 and not all_data_pc2:
+                    # 获取 PointCloud2 所有字段名
+                    columns_pc2 = ['frame_id', 'timestamp'] + \
+                        [field.name for field in msg.fields]
+                # 提取所有点的数据
+                pc_gen = pc2.read_points(
+                    msg, field_names=[field.name for field in msg.fields], skip_nans=True)
+                for point in pc_gen:
+                    all_data_pc2.append((frame_id, timestamp) + tuple(point))
+
+            # 处理 PointCloud 数据
+            elif msg._type == 'sensor_msgs/PointCloud':
+                if frame_id == 0 and not all_data_pc:
+                    # 获取 PointCloud 所有 channel 名
+                    columns_pc = ['frame_id', 'timestamp', 'x', 'y',
+                                  'z'] + [chan.name for chan in msg.channels]
+                # 提取所有点的数据
+                for i, point in enumerate(msg.points):
+                    point_data = (point.x, point.y, point.z) + \
+                        tuple(chan.values[i] for chan in msg.channels)
+                    all_data_pc.append((frame_id, timestamp) + point_data)
+
+            frame_id += 1  # 更新帧序号
+
+    # 保存 PointCloud2 数据到文件
+    if all_data_pc2:
+        df_pc2 = pd.DataFrame(all_data_pc2, columns=columns_pc2)
+        df_pc2.to_csv(output_csv_pc2, index=False)
+        print(f"PointCloud2 data has been saved to {output_csv_pc2}")
+        df_pc2.to_csv(output_txt_pc2, sep=' ', index=False, header=False)
+        print(f"PointCloud2 data has been saved to {output_txt_pc2}")
+
+    # 保存 PointCloud 数据到文件
+    if all_data_pc:
+        df_pc = pd.DataFrame(all_data_pc, columns=columns_pc)
+        df_pc.to_csv(output_csv_pc, index=False)
+        print(f"PointCloud data has been saved to {output_csv_pc}")
+        df_pc.to_csv(output_txt_pc, sep=' ', index=False, header=False)
+        print(f"PointCloud data has been saved to {output_txt_pc}")
+
+
+# 处理每个 bag 文件
+for bag_file in bag_files:
+    process_bag_file(bag_file)
