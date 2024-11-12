@@ -5,14 +5,14 @@ import sensor_msgs.point_cloud2 as pc2
 
 # 定义多个 bag 文件路径
 bag_files = [
-    '/media/sax/新加卷/待测548数据集/jf_test.bag',
+    '/media/sax/新加卷/数据集1105/2024-11-05-16-46-36.bag',
     '/media/sax/新加卷/待测548数据集/jf_test2.bag',
     '/media/sax/新加卷/待测548数据集/jf_test3.bag'
 ]  # 可以添加更多 bag 文件路径
 
 # 定义要读取的 topic
 topics_to_check = ['/ars548', '/hugin_raf_1/radar_data', '/ars548_process/point_cloud2',
-                   '/ars548_process/detection_point_cloud', '/radar/PointCloudDetection']  # 根据实际的 topic 名称修改
+                   '/ars548_process/detection_point_cloud', '/radar/PointCloudDetection', '/point_cloud_raw']  # 根据实际的 topic 名称修改
 
 
 def process_bag_file(bag_file):
