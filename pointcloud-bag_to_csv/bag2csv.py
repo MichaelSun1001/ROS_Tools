@@ -5,7 +5,7 @@ import sensor_msgs.point_cloud2 as pc2
 
 # 定义多个 bag 文件路径
 bag_files = [
-    '/media/sax/新加卷/数据集1105/2024-11-05-16-46-36.bag',
+    '/media/sax/新加卷/2024.11.14朱军ImuCalib/2024.11.14朱军ImuCalib/709_static_ReadImuSataus_1.bag',
     '/media/sax/新加卷/待测548数据集/jf_test2.bag',
     '/media/sax/新加卷/待测548数据集/jf_test3.bag'
 ]  # 可以添加更多 bag 文件路径
