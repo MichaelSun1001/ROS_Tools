@@ -36,7 +36,7 @@ def process_bag_file(bag_file):
     with rosbag.Bag(bag_file, 'r') as bag:
         frame_id = 0  # 帧序号
         for topic, msg, t in bag.read_messages(topics=topics_to_check):
-            timestamp = msg.header.stamp.to_sec()  # 时间戳转换为秒
+            timestamp = f"{msg.header.stamp.secs}.{msg.header.stamp.nsecs}"
 
             # 处理 PointCloud2 数据
             if msg._type == 'sensor_msgs/PointCloud2':

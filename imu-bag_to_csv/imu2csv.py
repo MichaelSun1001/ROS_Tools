@@ -1,18 +1,16 @@
 import os
 import rosbag
 import pandas as pd
-from sensor_msgs.msg import Imu
 
 # 定义多个 bag 文件路径
 bag_files = [
-    '/media/sax/新加卷/2024.11.14朱军ImuCalib/2024.11.14朱军ImuCalib/boyuanlou_park_static_ReadImuSataus_2.bag',
-    '/media/sax/新加卷/待测548数据集/jf_test2.bag',
+    '/media/sax/新加卷/FDI-dynamic.bag',
+    '/media/sax/新加卷/FDI_static.bag',
     '/media/sax/新加卷/待测548数据集/jf_test3.bag'
 ]  # 可以添加更多 bag 文件路径
 
 # 定义要读取的 topic
-topics_to_check = ['/imu', '/imu/data_raw',
-                   '/sensor/imu']  # 根据实际的 topic 名称修改
+topics_to_check = ['/imu', '/imu/data_raw', '/sensor/imu']  # 根据实际的 topic 名称修改
 
 
 def process_bag_file(bag_file):
@@ -34,7 +32,8 @@ def process_bag_file(bag_file):
         for topic, msg, t in bag.read_messages(topics=topics_to_check):
             if msg._type == 'sensor_msgs/Imu':
                 # 提取 IMU 数据
-                timestamp = msg.header.stamp.to_sec()  # 时间戳转换为秒
+                # 合并秒和纳秒部分
+                timestamp = f"{msg.header.stamp.secs}.{msg.header.stamp.nsecs}"
                 frame_id = msg.header.frame_id  # 帧 ID
                 orientation = (msg.orientation.x, msg.orientation.y,
                                msg.orientation.z, msg.orientation.w)  # 四元数

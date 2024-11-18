@@ -35,7 +35,11 @@ def process_bag_file(bag_file):
     with rosbag.Bag(bag_file, 'r') as bag:
         # 处理每个图像消息
         for topic, msg, t in bag.read_messages(topics=image_topics):
-            timestamp = msg.header.stamp.to_sec()  # 获取消息的时间戳
+            # 获取时间戳的秒和纳秒部分
+            secs = msg.header.stamp.secs
+            nsecs = msg.header.stamp.nsecs
+            timestamp = f"{secs}.{nsecs}"  # 完整时间戳
+
             frame_id = frame_id_dict[topic]  # 获取当前话题的帧序号
 
             # 为每个图像话题创建独立的目录
@@ -48,7 +52,7 @@ def process_bag_file(bag_file):
             if msg._type == 'sensor_msgs/Image':
                 cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
                 image_file = os.path.join(
-                    image_topic_dir, f'image_raw_{frame_id}_{int(timestamp)}.jpg')
+                    image_topic_dir, f'image_raw_{frame_id}_{secs}_{nsecs:09d}.jpg')
                 cv2.imwrite(image_file, cv_image)
                 print(f"保存图像文件: {image_file}")
 
@@ -56,7 +60,7 @@ def process_bag_file(bag_file):
                 cv_image = bridge.compressed_imgmsg_to_cv2(
                     msg, desired_encoding='bgr8')
                 compressed_image_file = os.path.join(
-                    image_topic_dir, f'image_raw_compressed_{frame_id}_{int(timestamp)}.jpg')
+                    image_topic_dir, f'image_raw_compressed_{frame_id}_{secs}_{nsecs:09d}.jpg')
                 cv2.imwrite(compressed_image_file, cv_image)
                 print(f"保存压缩图像文件: {compressed_image_file}")
 
