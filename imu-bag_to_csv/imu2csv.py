@@ -33,7 +33,7 @@ def process_bag_file(bag_file):
             if msg._type == 'sensor_msgs/Imu':
                 # 提取 IMU 数据
                 # 合并秒和纳秒部分
-                timestamp = f"{msg.header.stamp.secs}.{msg.header.stamp.nsecs}"
+                timestamp = f"{msg.header.stamp.secs}.{msg.header.stamp.nsecs:09d}"
                 frame_id = msg.header.frame_id  # 帧 ID
                 orientation = (msg.orientation.x, msg.orientation.y,
                                msg.orientation.z, msg.orientation.w)  # 四元数
