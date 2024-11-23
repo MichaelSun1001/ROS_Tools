@@ -45,7 +45,7 @@ def save_pointcloud_to_txt(msg, filename, message_count):
         # 写入头信息
         file.write("Header:\n")
         file.write(f"  seq: {msg.header.seq}\n")
-        file.write(f"  stamp: {msg.header.stamp}\n")
+        file.write(f"  stamp: {msg.header.stamp.secs}.{msg.header.stamp.nsecs:09d}\n")
         file.write(f"  frame_id: {msg.header.frame_id}\n")
 
         # 写入点信息
@@ -91,9 +91,18 @@ def process_bag_file(bag_file, topics_to_check):
 
 # 定义 bag 文件路径和 topics
 bag_files = [
-    '/media/sax/新加卷/2024-11-19-16-41-22.bag',
-    '/media/sax/新加卷/待测548数据集/jf_test2.bag',
-    '/media/sax/新加卷/待测548数据集/jf_test3.bag'
+    '/media/sax/新加卷/2024年11月23日-速度试验/front-34s.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/front-41s.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/front-56s.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/front-goback-fast.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/front-goback-slow.bag',
+    
+    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-35s.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-43s.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-49s.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-59s.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-goback-fast.bag',
+    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-goback-slow.bag',
 ]
 topics_to_check = ['/ars548', '/hugin_raf_1/radar_data', '/ars548_process/point_cloud',
                    '/ars548_process/point_cloud2', '/ars548_process/detection_point_cloud',
