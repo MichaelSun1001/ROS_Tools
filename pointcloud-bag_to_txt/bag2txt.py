@@ -3,7 +3,7 @@ import rosbag
 
 
 def save_pointcloud2_to_txt(msg, filename, message_count):
-    with open(filename, 'a') as file:
+    with open(filename, "a") as file:
         file.write(f"Message {message_count}:\n")
 
         # 写入头信息
@@ -24,8 +24,7 @@ def save_pointcloud2_to_txt(msg, filename, message_count):
             file.write(f"    datatype: {field.datatype}\n")
             file.write(f"    count: {field.count}\n")
 
-        file.write(
-            f"Is Big Endian: {'true' if msg.is_bigendian else 'false'}\n")
+        file.write(f"Is Big Endian: {'true' if msg.is_bigendian else 'false'}\n")
         file.write(f"Point Step: {msg.point_step}\n")
         file.write(f"Row Step: {msg.row_step}\n")
         file.write(f"Is Dense: {'true' if msg.is_dense else 'false'}\n")
@@ -33,13 +32,13 @@ def save_pointcloud2_to_txt(msg, filename, message_count):
         # 写入点云数据（十六进制表示），分块显示
         file.write("Data (hex):\n")
         for i in range(0, len(msg.data), 16):  # 每 16 个字节一行
-            chunk = msg.data[i:i + 16]
-            file.write(' '.join(f"{byte:02x}" for byte in chunk) + "\n")
+            chunk = msg.data[i : i + 16]
+            file.write(" ".join(f"{byte:02x}" for byte in chunk) + "\n")
         file.write("\n")
 
 
 def save_pointcloud_to_txt(msg, filename, message_count):
-    with open(filename, 'a') as file:
+    with open(filename, "a") as file:
         file.write(f"Message {message_count}:\n")
 
         # 写入头信息
@@ -70,20 +69,20 @@ def process_bag_file(bag_file, topics_to_check):
         return
 
     bag_base_name = os.path.splitext(os.path.basename(bag_file))[0]
-    output_txt_pc2 = f'{bag_base_name}_PointCloud2.txt'
-    output_txt_pc = f'{bag_base_name}_PointCloud.txt'
+    output_txt_pc2 = f"{bag_base_name}_PointCloud2.txt"
+    output_txt_pc = f"{bag_base_name}_PointCloud.txt"
 
-    with rosbag.Bag(bag_file, 'r') as bag:
+    with rosbag.Bag(bag_file, "r") as bag:
         message_count = 0
         for topic, msg, t in bag.read_messages(topics=topics_to_check):
             message_count += 1
 
             # 处理 PointCloud2
-            if msg._type == 'sensor_msgs/PointCloud2':
+            if msg._type == "sensor_msgs/PointCloud2":
                 save_pointcloud2_to_txt(msg, output_txt_pc2, message_count)
 
             # 处理 PointCloud
-            elif msg._type == 'sensor_msgs/PointCloud':
+            elif msg._type == "sensor_msgs/PointCloud":
                 save_pointcloud_to_txt(msg, output_txt_pc, message_count)
 
         print(f"Processed {message_count} messages from {bag_file}")
@@ -91,22 +90,27 @@ def process_bag_file(bag_file, topics_to_check):
 
 # 定义 bag 文件路径和 topics
 bag_files = [
-    '/media/sax/新加卷/2024年11月23日-速度试验/front-34s.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/front-41s.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/front-56s.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/front-goback-fast.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/front-goback-slow.bag',
-    
-    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-35s.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-43s.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-49s.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-59s.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-goback-fast.bag',
-    '/media/sax/新加卷/2024年11月23日-速度试验/lateral-goback-slow.bag',
+    "/media/sax/新加卷/2024年11月23日-速度试验/front-34s.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/front-41s.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/front-56s.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/front-goback-fast.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/front-goback-slow.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/lateral-35s.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/lateral-43s.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/lateral-49s.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/lateral-59s.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/lateral-goback-fast.bag",
+    "/media/sax/新加卷/2024年11月23日-速度试验/lateral-goback-slow.bag",
 ]
-topics_to_check = ['/ars548', '/hugin_raf_1/radar_data', '/ars548_process/point_cloud',
-                   '/ars548_process/point_cloud2', '/ars548_process/detection_point_cloud',
-                   '/radar/PointCloudDetection', '/point_cloud_raw']
+topics_to_check = [
+    "/ars548",
+    "/hugin_raf_1/radar_data",
+    "/ars548_process/point_cloud",
+    "/ars548_process/point_cloud2",
+    "/ars548_process/detection_point_cloud",
+    "/radar/PointCloudDetection",
+    "/point_cloud_raw",
+]
 
 # 执行处理
 for bag_file in bag_files:
