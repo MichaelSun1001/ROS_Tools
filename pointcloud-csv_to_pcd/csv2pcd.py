@@ -34,7 +34,7 @@ DATA ascii
 """
 
         # 写入PCD文件
-        with open(pcd_file_path, 'w') as f:
+        with open(pcd_file_path, "w") as f:
             f.write(pcd_header)
             for point in points:
                 f.write(" ".join(map(str, point)) + "\n")
@@ -51,8 +51,16 @@ if __name__ == "__main__":
     pcd_file_path = "/home/sax/db3_2_pcd/underground-human_static/rosbag2_2023_10_14-21_22_54_0.db/radar_points.pcd"
 
     # 指定需要的列
-    required_columns = ['X_m', 'Y_m', 'Z_m', 'Vx_ms',
-                        'RCS_dbm2', 'Time_ms', 'probability', 'snr']
+    required_columns = [
+        "X_m",
+        "Y_m",
+        "Z_m",
+        "Vx_ms",
+        "RCS_dbm2",
+        "Time_ms",
+        "probability",
+        "snr",
+    ]
 
     # 调用转换函数
     csv_to_pcd(csv_file_path, pcd_file_path, required_columns)

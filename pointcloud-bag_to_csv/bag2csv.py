@@ -5,19 +5,12 @@ import sensor_msgs.point_cloud2 as pc2
 
 # 定义多个 bag 文件路径
 bag_files = [
-    # '/media/sax/新加卷/2024年11月23日-速度试验/front-34s.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/front-41s.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/front-56s.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/front-goback-fast.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/front-goback-slow.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/lateral-35s.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/lateral-43s.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/lateral-49s.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/lateral-59s.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/lateral-goback-fast.bag',
-    # '/media/sax/新加卷/2024年11月23日-速度试验/lateral-goback-slow.bag',
-    "/media/sax/新加卷/2024年11月23日-速度试验/new-can.bag",
-    "/media/sax/新加卷/2024年11月23日-速度试验/new-can+new-tplink.bag",
+    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/548/548-long-loop.bag",
+    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/548/548-short-loop.bag",
+    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/548/wuzhedang.bag",
+    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/548/zhedang.bag",
+    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/hugin/hugin-long-loop.bag",
+    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/hugin/hugin-short-loop.bag",
     # '/media/sax/新加卷/2024年11月23日-速度试验/front-34s.bag',
 ]  # 可以添加更多 bag 文件路径
 
