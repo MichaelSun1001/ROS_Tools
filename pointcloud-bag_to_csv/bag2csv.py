@@ -4,7 +4,7 @@ import pandas as pd
 import sensor_msgs.point_cloud2 as pc2
 
 # 定义 bag 文件夹路径
-bag_folder = "/media/sax/新加卷/苏州隧道实验-2024年12月2日/实验2/Hugin/点云/bag"
+bag_folder = "/media/sax/新加卷1/苏州隧道实验-2024年12月2日/实验3/ARS548/bag"
 
 # 动态读取文件夹中的所有 .bag 文件
 bag_files = [
