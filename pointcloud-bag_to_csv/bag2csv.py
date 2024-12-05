@@ -3,26 +3,20 @@ import rosbag
 import pandas as pd
 import sensor_msgs.point_cloud2 as pc2
 
-# 定义多个 bag 文件路径
+# 定义 bag 文件夹路径
+bag_folder = "/media/sax/新加卷/苏州隧道实验-2024年12月2日/实验2/Hugin/点云/bag"
+
+# 动态读取文件夹中的所有 .bag 文件
 bag_files = [
-    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/548/548-long-loop.bag",
-    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/548/548-short-loop.bag",
-    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/548/wuzhedang.bag",
-    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/548/zhedang.bag",
-    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/hugin/hugin-long-loop.bag",
-    "/media/sax/新加卷/RI_Calib-dataset/2024年11月27日/hugin/hugin-short-loop.bag",
-    # '/media/sax/新加卷/2024年11月23日-速度试验/front-34s.bag',
-]  # 可以添加更多 bag 文件路径
+    os.path.join(bag_folder, f) for f in os.listdir(bag_folder) if f.endswith(".bag")
+]
 
 # 定义要读取的 topic
 topics_to_check = [
-    "/ars548",
-    "/hugin_raf_1/radar_data",
     "/ars548_process/point_cloud",
     "/ars548_process/point_cloud2",
-    "/ars548_process/detection_point_cloud",
-    "/radar/PointCloudDetection",
-    "/point_cloud_raw",
+    "/ars548",
+    "/hugin_raf_1/radar_data",
 ]  # 根据实际的 topic 名称修改
 
 
