@@ -4,10 +4,10 @@ import rosbag
 from cv_bridge import CvBridge
 
 # 定义 bag 文件夹路径
-bag_folder = "/media/sax/新加卷/苏州隧道实验-2024年12月2日/实验2/ARS548/bag"
+bag_folder = "/media/sax/新加卷1/bag"
 
 # 定义固定的输出路径
-output_base_dir = "/media/sax/新加卷/苏州隧道实验-2024年12月2日/实验2/ARS548/test"  # 替换为您指定的路径
+output_base_dir = "/media/sax/新加卷1/bag/test"  # 替换为您指定的路径
 
 # 动态读取文件夹中的所有 .bag 文件
 bag_files = [
@@ -34,7 +34,7 @@ def process_bag_file(bag_file):
 
     # 从 bag 文件名生成输出目录
     bag_base_name = os.path.splitext(os.path.basename(bag_file))[0]
-    image_output_dir_base = os.path.join(output_base_dir, bag_base_name, "images")
+    image_output_dir_base = os.path.join(output_base_dir, bag_base_name)
 
     # 初始化每个话题的 frame_id 字典
     frame_id_dict = {topic: 0 for topic in image_topics}
@@ -63,7 +63,7 @@ def process_bag_file(bag_file):
                 try:
                     cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
                     image_file = os.path.join(
-                        image_topic_dir, f"image_raw_{frame_id}_{secs}_{nsecs:09d}.png"
+                        image_topic_dir, f"Image_{frame_id}_{secs}_{nsecs:09d}.png"
                     )
                     cv2.imwrite(image_file, cv_image)
                     print(f"保存图像文件: {image_file}")
@@ -77,7 +77,7 @@ def process_bag_file(bag_file):
                     )
                     compressed_image_file = os.path.join(
                         image_topic_dir,
-                        f"image_raw_compressed_{frame_id}_{secs}_{nsecs:09d}.png",
+                        f"CompressedImage_{frame_id}_{secs}_{nsecs:09d}.png",
                     )
                     cv2.imwrite(compressed_image_file, cv_image)
                     print(f"保存压缩图像文件: {compressed_image_file}")

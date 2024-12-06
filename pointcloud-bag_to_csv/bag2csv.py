@@ -4,7 +4,9 @@ import pandas as pd
 import sensor_msgs.point_cloud2 as pc2
 
 # 定义 bag 文件夹路径
-bag_folder = "/media/sax/新加卷1/苏州隧道实验-2024年12月2日/实验3/ARS548/bag"
+bag_folder = "/media/sax/新加卷1/bag"
+# 定义固定的输出路径
+output_base_dir = "/media/sax/新加卷1/bag/test"  # 替换为您指定的路径
 
 # 动态读取文件夹中的所有 .bag 文件
 bag_files = [
@@ -26,12 +28,19 @@ def process_bag_file(bag_file):
         print(f"Error: Bag file '{bag_file}' not found.")
         return
 
-    # 从 bag 文件名生成 CSV 和 TXT 文件名
+    # 从 bag 文件名生成文件夹结构
     bag_base_name = os.path.splitext(os.path.basename(bag_file))[0]
-    output_csv_pc2 = f"{bag_base_name}_PointCloud2.csv"
-    output_txt_pc2 = f"{bag_base_name}_PointCloud2.txt"
-    output_csv_pc = f"{bag_base_name}_PointCloud.csv"
-    output_txt_pc = f"{bag_base_name}_PointCloud.txt"
+
+    # 假设从 bag 文件名中获取需要的场景信息，例如 "548-scene1-front"
+    scene_info = (
+        bag_base_name.split("-")[0] + "-" + bag_base_name.split("-")[1]
+    )  # 例如 "548-scene1"
+
+    # 输出目录结构: /media/sax/新加卷1/bag/test/548-scene1-front/话题/话题类型/
+    output_topic_base_dir = os.path.join(output_base_dir, scene_info)
+
+    # 确保文件夹存在
+    os.makedirs(output_topic_base_dir, exist_ok=True)
 
     # 用于存储不同类型的数据
     all_data_pc2 = []
@@ -50,14 +59,33 @@ def process_bag_file(bag_file):
         for topic, msg, t in bag.read_messages(topics=topics_to_check):
             timestamp = f"{msg.header.stamp.secs}.{msg.header.stamp.nsecs:09d}"
 
-            # 处理 PointCloud2 数据
+            # 根据话题名和消息类型来决定保存路径
+            topic_name = topic.strip("/").replace("/", "-")
+            topic_type_dir = os.path.join(output_topic_base_dir, topic_name)
+
+            # 确保话题文件夹存在
+            os.makedirs(topic_type_dir, exist_ok=True)
+
+            # 创建对应的目录分别存放 CSV 和 TXT 文件
             if msg._type == "sensor_msgs/PointCloud2":
-                frame_id_pc2 += 1  # 仅递增 PointCloud2 的帧序号
-                if columns_pc2 is None:  # 初始化列名
+                # 创建 PointCloud2 的保存路径
+                output_csv_pc2 = os.path.join(
+                    topic_type_dir, f"{bag_base_name}_PointCloud2.csv"
+                )
+                output_txt_pc2 = os.path.join(
+                    topic_type_dir, f"{bag_base_name}_PointCloud2.txt"
+                )
+                os.makedirs(
+                    os.path.dirname(output_csv_pc2), exist_ok=True
+                )  # 确保目录存在
+                os.makedirs(os.path.dirname(output_txt_pc2), exist_ok=True)
+
+                # 处理 PointCloud2 数据
+                frame_id_pc2 += 1
+                if columns_pc2 is None:
                     columns_pc2 = ["frame_id", "timestamp"] + [
                         field.name for field in msg.fields
                     ]
-                # 提取所有点的数据
                 pc_gen = pc2.read_points(
                     msg,
                     field_names=[field.name for field in msg.fields],
@@ -66,14 +94,25 @@ def process_bag_file(bag_file):
                 for point in pc_gen:
                     all_data_pc2.append((frame_id_pc2, timestamp) + tuple(point))
 
-            # 处理 PointCloud 数据
             elif msg._type == "sensor_msgs/PointCloud":
-                frame_id_pc += 1  # 仅递增 PointCloud 的帧序号
-                if columns_pc is None:  # 初始化列名
+                # 创建 PointCloud 的保存路径
+                output_csv_pc = os.path.join(
+                    topic_type_dir, f"{bag_base_name}_PointCloud.csv"
+                )
+                output_txt_pc = os.path.join(
+                    topic_type_dir, f"{bag_base_name}_PointCloud.txt"
+                )
+                os.makedirs(
+                    os.path.dirname(output_csv_pc), exist_ok=True
+                )  # 确保目录存在
+                os.makedirs(os.path.dirname(output_txt_pc), exist_ok=True)
+
+                # 处理 PointCloud 数据
+                frame_id_pc += 1
+                if columns_pc is None:
                     columns_pc = ["frame_id", "timestamp", "x", "y", "z"] + [
                         chan.name for chan in msg.channels
                     ]
-                # 提取所有点的数据
                 for i, point in enumerate(msg.points):
                     point_data = (point.x, point.y, point.z) + tuple(
                         chan.values[i] for chan in msg.channels
