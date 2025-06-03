@@ -4,9 +4,9 @@ import pandas as pd
 import sensor_msgs.point_cloud2 as pc2
 
 # 定义 bag 文件夹路径
-bag_folder = "/media/sax/新加卷1/bag"
+bag_folder = "/home/sax/rosbags/test"
 # 定义固定的输出路径
-output_base_dir = "/media/sax/新加卷1/bag/test"  # 替换为您指定的路径
+output_base_dir = "/home/sax/rosbags/test"  # 替换为您指定的路径
 
 # 动态读取文件夹中的所有 .bag 文件
 bag_files = [
@@ -92,7 +92,8 @@ def process_bag_file(bag_file):
                     skip_nans=True,
                 )
                 for point in pc_gen:
-                    all_data_pc2.append((frame_id_pc2, timestamp) + tuple(point))
+                    all_data_pc2.append(
+                        (frame_id_pc2, timestamp) + tuple(point))
 
             elif msg._type == "sensor_msgs/PointCloud":
                 # 创建 PointCloud 的保存路径
