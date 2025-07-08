@@ -71,8 +71,8 @@ def csv_to_pointcloud(csv_file, bag_file):
 
 
 if __name__ == '__main__':
-    csv_file = '/home/sax/ROS_Tools/pointcloud-csv_to_bag/test.csv'  # CSV文件路径
-    bag_file = '/home/sax/ROS_Tools/output.bag'     # 输出bag文件路径
+    csv_file = '/home/sax/rosbags/train_head.csv'  # CSV文件路径
+    bag_file = '/home/sax/rosbags/train_head.bag'     # 输出bag文件路径
 
     try:
         csv_to_pointcloud(csv_file, bag_file)
